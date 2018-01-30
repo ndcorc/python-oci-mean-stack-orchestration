@@ -1,0 +1,7 @@
+[DEFAULT]
+user = ocid1.user.oc1..aaaaaaaa5x3skqlkah46gsjdmxidecydkrrzrvh6rh666ssdb2ggpxmux6dq
+fingerprint = fe:07:f2:ee:1f:6e:62:da:b5:1c:26:da:f7:36:cd:ed
+key_file = /root/.oci/oci_api_key.pem
+tenancy = ocid1.tenancy.oc1..aaaaaaaawz52pbyqeud4ryne7ojegn2bzavhie4bgki5j6k7fwp5asbs5dqa
+region = us-ashburn-1
+pass_phrase = terraform
