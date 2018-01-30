@@ -1,7 +1,8 @@
 [DEFAULT]
-user = ocid1.user.oc1..aaaaaaaa5x3skqlkah46gsjdmxidecydkrrzrvh6rh666ssdb2ggpxmux6dq
-fingerprint = fe:07:f2:ee:1f:6e:62:da:b5:1c:26:da:f7:36:cd:ed
-key_file = /root/.oci/oci_api_key.pem
-tenancy = ocid1.tenancy.oc1..aaaaaaaawz52pbyqeud4ryne7ojegn2bzavhie4bgki5j6k7fwp5asbs5dqa
+user = ocid1.user.oc1..aaaaaaaaib6h2j62ezwu3zn3bu75iamdr6a5by7epwnsrinq3bayzl2cysgq
+fingerprint = 6f:fb:7e:c5:21:50:8c:ed:69:9e:0b:a3:9c:89:4c:f8
+key_file = ~/.oci/oci_api_key.pem
+tenancy = ocid1.tenancy.oc1..aaaaaaaaxvh43eil7epawsv7nnc5ppemiqypkj6z7oznzdegkksn3aauigoa
+eastgroup = ocid1.compartment.oc1..aaaaaaaa7hb6f2zbl6lf5nfusqiptcp3h3gzwrzfm5ejqllad5xatapeyyiq
 region = us-ashburn-1
 pass_phrase = terraform
