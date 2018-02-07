@@ -6,9 +6,7 @@ from compute import Compute
 from load_balancer import LoadBalancer
 
 if __name__ == '__main__':
-    parser = configparser.ConfigParser()
-    parser.read('config')
-    config = parser.defaults()
+    config = oci.config.from_file()
     instance_config = configparser.RawConfigParser()
     instance_config.read('instance_config')
 
