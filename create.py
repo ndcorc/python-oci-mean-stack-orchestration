@@ -16,10 +16,10 @@ def install_mean_stack(config, subnet, vcn):
     mean_stack.install()
 
 if __name__ == '__main__':
-    parser = ConfigParser()
-    parser.read('config')
-    config = parser.defaults()
-    #config = oci.config.from_file()
+    #parser = ConfigParser()
+    #parser.read('config')
+    #config = parser.defaults()
+    config = oci.config.from_file()
 
     vcn = VCN(config)
     vcn.create_vcn()
