@@ -58,7 +58,7 @@ class LoadBalancer(object):
         self.client.create_backend_set(backend_set_details, self.lb_instance.id).data
         
     def create_backends(self):
-        for i in range(len(self.subnet_ids)):
+        for i in range(len(self.subnet_ids))[0:2]:
             private_ip = self.instance_config['COMPUTE'+str(i+1)]['private_ip']
             backend_details = CreateBackendDetails(
                 ip_address = private_ip,
