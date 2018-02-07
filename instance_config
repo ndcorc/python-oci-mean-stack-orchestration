@@ -1,0 +1,30 @@
+[VCN]
+vcn_id = ocid1.vcn.oc1.iad.aaaaaaaajo5irrlw3euv34vwtk4kwrwogki5sswxwdshai6qsezrozl76cka
+gateway_id = ocid1.internetgateway.oc1.iad.aaaaaaaahrnjj4hbpsji4u5vhxdh34ltuleaul6z2qm6g7tx3b6zfcoakn7q
+rt_id = ocid1.routetable.oc1.iad.aaaaaaaazliwdjusg43jj2wansmo5oy23vgfw4qzfmp7popm4ssog4xftrta
+subnet1 = ocid1.subnet.oc1.iad.aaaaaaaal5f43werpkf3ekobn37eaa2wnamby2nnvjkxcdiajsmiaemvfzwa
+subnet2 = ocid1.subnet.oc1.iad.aaaaaaaao7f7rsaaba3j3esxyn5n7xklyk7vhkewuy2rmczffhtophihuh2a
+subnet3 = ocid1.subnet.oc1.iad.aaaaaaaauq2rm6gwo6lwnl7cqhqzixuoanza657q25kdtn5yqkv5ooqucqhq
+
+[COMPUTE3]
+instance_id = ocid1.instance.oc1.iad.abuwcljrpocpxjxky2mli2alqjlfs2o5moabuwak3gvs2wdlvcqtdbbmbi2a
+public_ip = 129.213.27.161
+private_ip = 10.0.2.2
+keyfile = private3.pem
+
+[COMPUTE2]
+instance_id = ocid1.instance.oc1.iad.abuwcljszasb74lq3nm3jdl4dewzhelbbnyvle4xgen5ocu3tmisfh37xpga
+public_ip = 129.213.105.157
+private_ip = 10.0.1.2
+keyfile = private2.pem
+
+[COMPUTE1]
+instance_id = ocid1.instance.oc1.iad.abuwcljtwehcvb6mgwxsm4pkb62fdaxaakrm2jgna6b5qbaxqawpwbdfejha
+public_ip = 129.213.117.149
+private_ip = 10.0.0.2
+keyfile = private1.pem
+
+[LOAD_BALANCER]
+lb_id = ocid1.loadbalancer.oc1.iad.aaaaaaaatgn6tiqrgt3emljvj43ylngzmnijpzxwypv6agmnuk3ccpp6fooa
+public_ip = 129.213.70.43
+
