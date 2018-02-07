@@ -36,6 +36,7 @@ class LoadBalancer(object):
                     self.lb_instance = lb
                     self.public_ip = lb.ip_addresses[0].ip_address
                     return
+            time.sleep(5)
 
     def delete_load_balancer(self):
         print('Deleting load balancer ...')

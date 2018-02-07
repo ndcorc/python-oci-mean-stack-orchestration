@@ -30,7 +30,7 @@ if __name__ == '__main__':
     vcn.create_instance_config()
 
     threads = []
-    for subnet in vcn.subnets:
+    for subnet in vcn.subnets[0:1]:
         thread = threading.Thread(target=install_mean_stack, args=(config, subnet, vcn,))
         threads.append(thread)
         thread.start()
