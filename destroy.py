@@ -14,11 +14,11 @@ if __name__ == '__main__':
 
     vcn = VCN(config, instance_config)
     lb = LoadBalancer(config, vcn.subnets, instance_config)
-    
+
     lb.delete_load_balancer()
 
     print('Deleting %s compute instances ...' % (len(vcn.subnets)))
-    for i, subnet in enumerate(vcn.subnets):
+    for i, subnet in enumerate(vcn.subnets[0:2]):
         compute = Compute(config, subnet, instance_config)
         compute.terminate_instance()
         os.remove('private'+str(i+1)+'.pem')
