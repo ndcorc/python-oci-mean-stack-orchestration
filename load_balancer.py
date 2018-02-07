@@ -70,7 +70,7 @@ class LoadBalancer(object):
                 self.backends = self.client.list_backends(self.lb_instance.id, self.config['backend_set_name']).data
             except Exception as e: 
                 continue
-            while len(self.backends) < 3:
+            while len(self.backends) < 2:
                 self.backends = self.client.list_backends(self.lb_instance.id, self.config['backend_set_name']).data
                 time.sleep(1)
             return
