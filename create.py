@@ -6,7 +6,7 @@ from compute import Compute
 from mean_stack_config import MeanStackConfig
 from load_balancer import LoadBalancer
 
-debug = False
+debug = True
 
 if debug:
     parser = ConfigParser()
@@ -20,19 +20,17 @@ def install_mean_stack(subnet, vcn):
     compute.launch_instance()
     compute.get_vnic(vcn)
     mean_stack = MeanStackConfig(compute)
+    mean_stack.connect()
     mean_stack.install()
 
 """
+subnet = vcn.subnets[0]
 compute = Compute(config, subnet)
-compute_details = LaunchInstanceDetails(
-    availability_domain = compute.subnet.availability_domain,
-    compartment_id = compute.config['compartment'],
-    display_name = compute.name,
-    image_id = compute.operating_systems[config['image_os']],
-    shape = config['shape'],
-    subnet_id = compute.subnet.id,
-    metadata = compute.create_metadata()
-)
+compute = Compute(config, subnet)
+compute.launch_instance()
+compute.get_vnic(vcn)
+mean_stack = MeanStackConfig(compute)
+mean_stack.client.connect(mean_stack.public_ip, username='opc', look_for_keys=False, key_filename=mean_stack.keyfile, timeout=1)
 """
 
 def join_threads(threads):

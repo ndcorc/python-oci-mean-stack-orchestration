@@ -20,7 +20,7 @@ class MeanStackConfig(object):
                 self.client.connect(self.public_ip, username='opc', look_for_keys=False, key_filename=self.keyfile, timeout=1)
             except Exception as e: 
                 print(e)
-                continue
+                return
             return
 
     def execute(self, command):

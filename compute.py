@@ -35,20 +35,20 @@ class Compute(object):
             public_exponent=65537,
             key_size=2048
         )
-        private_key = key.private_bytes(
+        self.private_key = key.private_bytes(
             crypto_serialization.Encoding.PEM,
             crypto_serialization.PrivateFormat.TraditionalOpenSSL,
             crypto_serialization.NoEncryption())
-        public_key = key.public_key().public_bytes(
+        self.public_key = key.public_key().public_bytes(
             crypto_serialization.Encoding.OpenSSH,
             crypto_serialization.PublicFormat.OpenSSH
         )
         with open('./'+self.keyfile, 'w+') as f:
             os.chmod('./'+self.keyfile, 0o600)
-            f.write(private_key.decode())
+            f.write(self.private_key.decode())
         print('Created private ssh key - "./'+self.keyfile+'"')
         metadata = {
-            'ssh_authorized_keys': public_key.decode()
+            'ssh_authorized_keys': self.public_key.decode()
         }
         return metadata
 
