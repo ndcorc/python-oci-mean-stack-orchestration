@@ -14,20 +14,12 @@ from oci.core.models.update_security_list_details import UpdateSecurityListDetai
 
 class VCN(object):
 
-    def __init__(self, config, instance_config=None):
+    def __init__(self, config):
         self.config = config
-        self.instance_config = instance_config
         self.client = VirtualNetworkClient(config)
         self.subnets = []
         self.route_rules = []
         self.security_rules = []
-        if instance_config != None:
-            self.vcn_id = instance_config['VCN']['vcn_id']
-            self.gateway_id = instance_config['VCN']['gateway_id']
-            self.rt_id = instance_config['VCN']['rt_id']
-            self.subnets.append(self.client.get_subnet(instance_config['VCN']['subnet1']).data)
-            self.subnets.append(self.client.get_subnet(instance_config['VCN']['subnet2']).data)
-            self.subnets.append(self.client.get_subnet(instance_config['VCN']['subnet3']).data)
 
     def create_vcn(self):
         print('Creating VCN ...')
@@ -38,12 +30,6 @@ class VCN(object):
         )
         self.vcn_config = self.client.create_vcn(vcn_details).data
 
-    def delete_vcn(self):
-        while True:
-            try: self.client.delete_vcn(self.vcn_id)   
-            except Exception as e: continue
-            break  
-
     def create_gateway(self):
         gateway_details = CreateInternetGatewayDetails(
             compartment_id = self.config['compartment'],
@@ -51,9 +37,6 @@ class VCN(object):
             vcn_id = self.vcn_config.id
         )
         self.gateway = self.client.create_internet_gateway(gateway_details).data
-
-    def delete_internet_gateway(self):
-        self.client.delete_internet_gateway(self.gateway_id)      
 
     def create_route_rules(self):
         route_rule = RouteRule(
@@ -66,13 +49,6 @@ class VCN(object):
             rt_id = self.vcn_config.default_route_table_id,
             update_route_table_details = route_table_details
         )
-    
-    def delete_route_rules(self):
-        route_table_details = UpdateRouteTableDetails(route_rules=[])
-        self.default_route_table = self.client.update_route_table(
-            rt_id = self.rt_id,
-            update_route_table_details = route_table_details
-        )
 
     def create_subnets(self):
         for i, ad in enumerate(['ad_1', 'ad_2', 'ad_3']):
@@ -83,14 +59,6 @@ class VCN(object):
                 vcn_id = self.vcn_config.id
             )
             self.subnets.append(self.client.create_subnet(subnet_details).data)
-
-    def delete_subnets(self):
-        print('Terminating VCN ...\n')
-        for subnet in self.subnets:
-            while True:
-                try: self.client.delete_subnet(subnet.id)
-                except Exception as e: continue
-                break
 
     def create_security_rules(self):
         security_list = self.client.get_security_list(security_list_id=self.vcn_config.default_security_list_id).data
@@ -112,16 +80,3 @@ class VCN(object):
             security_list_id = self.vcn_config.default_security_list_id,
             update_security_list_details = security_list_details
         )
-
-    def create_instance_config(self):
-        config = ConfigParser()
-        config['VCN'] = {
-            'vcn_id': self.vcn_config.id,
-            'gateway_id': self.gateway.id,
-            'rt_id': self.vcn_config.default_route_table_id,
-            'subnet1': self.subnets[0].id,
-            'subnet2': self.subnets[1].id,
-            'subnet3': self.subnets[2].id
-        }
-        with open('instance_config', 'w') as configfile:
-            config.write(configfile)

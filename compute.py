@@ -12,22 +12,22 @@ from cryptography.hazmat.backends import default_backend as crypto_default_backe
 
 class Compute(object):
 
-    def __init__(self, config, subnet=None, instance_config=None):
+    def __init__(self, config, subnet):
         self.config = config
         self.client = ComputeClient(config)
-        self.operating_systems = {}
-        images = self.client.list_images(config['compartment']).data
+        self.operating_systems = self.get_operating_systems()
+        self.subnet = subnet
+        self.keyfile = 'private'+self.subnet.availability_domain[-1]+'.pem'
+        self.name = self.config['display_name']+' '+self.subnet.availability_domain[-1]
+
+    def get_operating_systems(self):
+        operating_systems = {}
+        images = self.client.list_images(self.config['compartment']).data
         for image in images:
             os = image.operating_system + " " + image.operating_system_version
-            if os not in self.operating_systems:
-                self.operating_systems[os] = image.id
-        if subnet != None:
-            self.subnet = subnet
-            self.keyfile = 'private'+self.subnet.availability_domain[-1]+'.pem'
-        if instance_config != None:
-            section = 'COMPUTE' + self.subnet.availability_domain[-1]
-            self.instance_id = instance_config[section]['instance_id']
-        #self.identity = IdentityClient(config)
+            if os not in operating_systems:
+                operating_systems[os] = image.id
+        return operating_systems
 
     def create_metadata(self):
         key = rsa.generate_private_key(
@@ -57,13 +57,18 @@ class Compute(object):
         compute_details = LaunchInstanceDetails(
             availability_domain = self.subnet.availability_domain,
             compartment_id = self.config['compartment'],
-            display_name = self.config['display_name']+' '+self.subnet.availability_domain[-1],
+            display_name = self.name,
             image_id = self.operating_systems[self.config['image_os']],
             shape = self.config['shape'],
             subnet_id = self.subnet.id,
             metadata = self.create_metadata()
         )
-        self.compute_instance = self.client.launch_instance(compute_details).data
+        while True:
+            try:
+                self.compute_instance = self.client.launch_instance(compute_details).data
+                return
+            except Exception as e:
+                pass
         
     def get_vnic(self, vcn):
         while True:
@@ -73,24 +78,8 @@ class Compute(object):
                     vnic = vcn.client.get_vnic(attachment.vnic_id).data
                     self.public_ip = vnic.public_ip
                     self.private_ip = vnic.private_ip
-                    return
+                    return vnic
 
     def terminate_instance(self):
         print('Terminating compute instance ...')
         self.client.terminate_instance(self.instance_id)
-
-    def create_instance_config(self):
-        lock = threading.Lock()
-        lock.acquire()
-        try:
-            section = 'COMPUTE' + self.subnet.availability_domain[-1]
-            config = RawConfigParser()
-            config.add_section(section)
-            config.set(section, 'instance_id', self.compute_instance.id)
-            config.set(section, 'public_ip', self.public_ip)
-            config.set(section, 'private_ip', self.private_ip)
-            config.set(section, 'keyfile', self.keyfile)
-            with open('instance_config', 'a') as configfile:
-                config.write(configfile)
-        finally:
-            lock.release()

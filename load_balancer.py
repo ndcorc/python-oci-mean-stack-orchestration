@@ -11,15 +11,11 @@ from oci.load_balancer.models.create_listener_details import CreateListenerDetai
 
 class LoadBalancer(object):
 
-    def __init__(self, config, subnets, instance_config=None):
+    def __init__(self, config, vcn):
         self.config = config
-        self.instance_config = configparser.RawConfigParser()
-        self.instance_config.read('instance_config')
         self.client = LoadBalancerClient(config)
-        self.subnet_ids = [subnet.id for subnet in subnets]
-        if instance_config != None:
-            self.lb_id = instance_config['LOAD_BALANCER']['lb_id']
-            self.public_ip = instance_config['LOAD_BALANCER']['public_ip']
+        self.vcn = vcn
+        self.subnet_ids = [subnet.id for subnet in vcn.subnets]
 
     def create_load_balancer(self):
         print('Creating load balancer ...')
@@ -38,10 +34,6 @@ class LoadBalancer(object):
                     return
             time.sleep(5)
 
-    def delete_load_balancer(self):
-        print('Deleting load balancer ...')
-        self.client.delete_load_balancer(self.lb_id)
-
     def create_backend_set(self):
         health_checker_details = HealthCheckerDetails(
             port = 8080,
@@ -58,8 +50,10 @@ class LoadBalancer(object):
         self.client.create_backend_set(backend_set_details, self.lb_instance.id).data
         
     def create_backends(self):
-        for i in range(len(self.subnet_ids))[0:2]:
-            private_ip = self.instance_config['COMPUTE'+str(i+1)]['private_ip']
+        for subnet_id in self.subnet_ids[0:2]:
+            private_ips = self.vcn.client.list_private_ips(subnet_id = subnet_id).data
+            try: private_ip = private_ips[0].ip_address
+            except Exception as e: return
             backend_details = CreateBackendDetails(
                 ip_address = private_ip,
                 port = 8080
@@ -84,12 +78,3 @@ class LoadBalancer(object):
         )
         self.client.create_listener(listener_details, self.lb_instance.id)
         time.sleep(10)
-
-    def create_instance_config(self):
-        section = 'LOAD_BALANCER'
-        config = configparser.RawConfigParser()
-        config.add_section(section)
-        config.set(section, 'lb_id', self.lb_instance.id)
-        config.set(section, 'public_ip', self.public_ip)
-        with open('instance_config', 'a') as configfile:
-            config.write(configfile)

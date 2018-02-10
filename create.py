@@ -6,20 +6,23 @@ from compute import Compute
 from mean_stack_config import MeanStackConfig
 from load_balancer import LoadBalancer
 
-def install_mean_stack(config, subnet, vcn):
+debug = True
+
+if debug:
+    parser = ConfigParser()
+    parser.read('config')
+    config = parser.defaults()
+else:
+    config = oci.config.from_file()
+
+def install_mean_stack(subnet, vcn):
     compute = Compute(config, subnet)
     compute.launch_instance()
-    compute.get_vnic(vcn)
-    compute.create_instance_config()
-    section = 'COMPUTE' + subnet.availability_domain[-1]
-    mean_stack = MeanStackConfig(section)
+    vnic = compute.get_vnic(vcn)
+    mean_stack = MeanStackConfig(compute)
     mean_stack.install()
 
 if __name__ == '__main__':
-    #parser = ConfigParser()
-    #parser.read('config')
-    #config = parser.defaults()
-    config = oci.config.from_file()
 
     vcn = VCN(config)
     vcn.create_vcn()
@@ -27,20 +30,18 @@ if __name__ == '__main__':
     vcn.create_route_rules()
     vcn.create_subnets()
     vcn.create_security_rules()
-    vcn.create_instance_config()
 
     threads = []
     for subnet in vcn.subnets[0:2]:
-        thread = threading.Thread(target=install_mean_stack, args=(config, subnet, vcn,))
+        thread = threading.Thread(target=install_mean_stack, args=(subnet, vcn,))
         threads.append(thread)
         thread.start()
     for thread in threads:
         thread.join()
 
-    lb = LoadBalancer(config, vcn.subnets)
+    lb = LoadBalancer(config, vcn)
     lb.create_load_balancer()
     lb.create_backend_set()
     lb.create_backends()
     lb.create_listener()
-    lb.create_instance_config()
     print('MEAN Stack URL: http://' + lb.public_ip + ':8080')
