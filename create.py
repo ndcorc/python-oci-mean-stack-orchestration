@@ -22,22 +22,44 @@ def install_mean_stack(subnet, vcn):
     mean_stack = MeanStackConfig(compute)
     mean_stack.install()
 
+"""
+compute = Compute(config, subnet)
+compute_details = LaunchInstanceDetails(
+    availability_domain = compute.subnet.availability_domain,
+    compartment_id = compute.config['compartment'],
+    display_name = compute.name,
+    image_id = compute.operating_systems[config['image_os']],
+    shape = config['shape'],
+    subnet_id = compute.subnet.id,
+    metadata = compute.create_metadata()
+)
+"""
+
+def join_threads(threads):
+    for thread in threads:
+        thread.join()
+
 if __name__ == '__main__':
 
     vcn = VCN(config)
     vcn.create_vcn()
     vcn.create_gateway()
     vcn.create_route_rules()
-    vcn.create_subnets()
+
+    subnet_threads = []
+    for ad in ['ad_1', 'ad_2']:
+        thread = threading.Thread(target=vcn.create_subnet, args=(ad,))
+        subnet_threads.append(thread)
+        thread.start()
+    join_threads(subnet_threads)
     vcn.create_security_rules()
 
-    threads = []
-    for subnet in vcn.subnets[0:2]:
+    install_threads = []
+    for subnet in vcn.subnets:
         thread = threading.Thread(target=install_mean_stack, args=(subnet, vcn,))
-        threads.append(thread)
+        install_threads.append(thread)
         thread.start()
-    for thread in threads:
-        thread.join()
+    join_threads(install_threads)
 
     lb = LoadBalancer(config, vcn)
     lb.create_load_balancer()

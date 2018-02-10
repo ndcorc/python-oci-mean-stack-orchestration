@@ -63,12 +63,13 @@ class Compute(object):
             subnet_id = self.subnet.id,
             metadata = self.create_metadata()
         )
-        while True:
-            try:
-                self.compute_instance = self.client.launch_instance(compute_details).data
-                return
-            except Exception as e:
-                pass
+        try:
+            self.compute_instance = self.client.launch_instance(compute_details).data
+            return
+        except Exception as e:
+            pass
+        finally:
+            return
         
     def get_vnic(self, vcn):
         while True:
@@ -78,6 +79,7 @@ class Compute(object):
                     vnic = vcn.client.get_vnic(attachment.vnic_id).data
                     self.public_ip = vnic.public_ip
                     self.private_ip = vnic.private_ip
+                    return
 
     def terminate_instance(self):
         print('Terminating compute instance ...')

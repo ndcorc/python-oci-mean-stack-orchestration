@@ -50,15 +50,33 @@ class VCN(object):
             update_route_table_details = route_table_details
         )
 
-    def create_subnets(self):
-        for i, ad in enumerate(['ad_1', 'ad_2', 'ad_3']):
-            subnet_details = CreateSubnetDetails(
-                availability_domain = self.config[ad],
-                cidr_block = '10.0.'+str(i)+'.0/24',
-                compartment_id = self.config['compartment'],
-                vcn_id = self.vcn_config.id
-            )
+    def create_subnet(self, ad):
+        cidr = '10.0.'+str(int(ad[-1])-1)+'.0/24'
+        print('Creating subnet with cidr: %s' % (cidr))
+        subnet_details = CreateSubnetDetails(
+            availability_domain = self.config[ad],
+            cidr_block = cidr,
+            compartment_id = self.config['compartment'],
+            vcn_id = self.vcn_config.id
+        )
+        try: 
             self.subnets.append(self.client.create_subnet(subnet_details).data)
+        except Exception as e:
+            pass
+        finally:
+            pass
+        while True:
+            try:
+                subnet = self.client.get_subnet(subnet_id=self.subnets[-1].id).data
+                if subnet.lifecycle_state == 'AVAILABLE':
+                    return
+                else: 
+                    continue
+            except Exception as e:
+                continue
+            finally:
+                return
+
 
     def create_security_rules(self):
         security_list = self.client.get_security_list(security_list_id=self.vcn_config.default_security_list_id).data
