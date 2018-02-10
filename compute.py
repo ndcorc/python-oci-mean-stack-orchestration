@@ -63,13 +63,12 @@ class Compute(object):
             subnet_id = self.subnet.id,
             metadata = self.create_metadata()
         )
-        try:
-            self.compute_instance = self.client.launch_instance(compute_details).data
-            return
-        except Exception as e:
-            pass
-        finally:
-            return
+        while True:
+            try:
+                self.compute_instance = self.client.launch_instance(compute_details).data
+                return
+            except Exception as e:
+                continue
         
     def get_vnic(self, vcn):
         while True:
