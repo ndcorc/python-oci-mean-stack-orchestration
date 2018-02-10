@@ -18,7 +18,7 @@ else:
 def install_mean_stack(subnet, vcn):
     compute = Compute(config, subnet)
     compute.launch_instance()
-    vnic = compute.get_vnic(vcn)
+    compute.get_vnic(vcn)
     mean_stack = MeanStackConfig(compute)
     mean_stack.install()
 

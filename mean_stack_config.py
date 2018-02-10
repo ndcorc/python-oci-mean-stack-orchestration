@@ -10,17 +10,12 @@ class MeanStackConfig(object):
         parser = configparser.ConfigParser()
         parser.read('config')
         self.config = parser.defaults()
-        """
-        self.instance_config = configparser.RawConfigParser()
-        self.instance_config.read('instance_config')
-        """
-        #self.public_ip = compute_ip
         self.public_ip = compute.public_ip
         self.keyfile = compute.keyfile
         print('Connecting to opc@%s ...' % (self.public_ip))
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        #client.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+        self.client.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
         while True:
             try:
                 self.client.connect(self.public_ip, username='opc', look_for_keys=False, key_filename=self.keyfile, timeout=1)

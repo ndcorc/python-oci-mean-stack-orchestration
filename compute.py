@@ -78,7 +78,6 @@ class Compute(object):
                     vnic = vcn.client.get_vnic(attachment.vnic_id).data
                     self.public_ip = vnic.public_ip
                     self.private_ip = vnic.private_ip
-                    return vnic
 
     def terminate_instance(self):
         print('Terminating compute instance ...')
