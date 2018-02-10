@@ -7,20 +7,21 @@ from os import chmod
 class MeanStackConfig(object):
 
     def __init__(self, compute):
-        parser = configparser.ConfigParser()
-        parser.read('config')
-        self.config = parser.defaults()
         self.public_ip = compute.public_ip
         self.keyfile = compute.keyfile
         print('Connecting to opc@%s ...' % (self.public_ip))
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         #self.client.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+
+    def connect(self):
         while True:
             try:
                 self.client.connect(self.public_ip, username='opc', look_for_keys=False, key_filename=self.keyfile, timeout=1)
-            except Exception as e: continue
-            break
+            except Exception as e: 
+                print(e)
+                continue
+            return
 
     def execute(self, command):
         stdin, stdout, stderr = self.client.exec_command(command)
