@@ -3,3 +3,4 @@ venv/
 __pycache__
 oci_api_key.pem
 config
+*.pem
