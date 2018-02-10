@@ -9,7 +9,7 @@ from oci.core.compute_client import ComputeClient
 from oci.core.virtual_network_client import VirtualNetworkClient
 from oci.core.models.update_route_table_details import UpdateRouteTableDetails
 
-debug = True
+debug = False
 
 if debug:
     parser = configparser.ConfigParser()

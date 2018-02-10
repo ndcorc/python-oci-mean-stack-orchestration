@@ -6,7 +6,7 @@ from compute import Compute
 from mean_stack_config import MeanStackConfig
 from load_balancer import LoadBalancer
 
-debug = True
+debug = False
 
 if debug:
     parser = ConfigParser()
