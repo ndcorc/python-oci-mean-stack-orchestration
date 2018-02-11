@@ -22,7 +22,7 @@ class VCN(object):
         self.security_rules = []
 
     def create_vcn(self):
-        print('Creating VCN ...')
+        print 'Creating VCN ...' 
         vcn_details = CreateVcnDetails(
             cidr_block = self.config['vcn_cidr'],
             compartment_id = self.config['compartment'],
@@ -52,7 +52,7 @@ class VCN(object):
 
     def create_subnet(self, ad):
         cidr = '10.0.'+str(int(ad[-1])-1)+'.0/24'
-        print('Creating subnet with cidr: %s' % (cidr))
+        print 'Creating subnet with cidr: %s' % (cidr)
         subnet_details = CreateSubnetDetails(
             availability_domain = self.config[ad],
             cidr_block = cidr,

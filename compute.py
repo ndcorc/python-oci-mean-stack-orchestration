@@ -46,14 +46,14 @@ class Compute(object):
         with open('./'+self.keyfile, 'w+') as f:
             os.chmod('./'+self.keyfile, 0o600)
             f.write(self.private_key.decode())
-        print('Created private ssh key - "./'+self.keyfile+'"')
+        print 'Created private ssh key - "./'+self.keyfile+'"' 
         metadata = {
             'ssh_authorized_keys': self.public_key.decode()
         }
         return metadata
 
     def launch_instance(self):
-        print('Creating compute instance ...')
+        print 'Creating compute instance ...' 
         compute_details = LaunchInstanceDetails(
             availability_domain = self.subnet.availability_domain,
             compartment_id = self.config['compartment'],
@@ -81,5 +81,5 @@ class Compute(object):
                     return
 
     def terminate_instance(self):
-        print('Terminating compute instance ...')
+        print 'Terminating compute instance ...' 
         self.client.terminate_instance(self.instance_id)

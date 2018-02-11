@@ -18,7 +18,7 @@ class LoadBalancer(object):
         self.subnet_ids = [subnet.id for subnet in vcn.subnets]
 
     def create_load_balancer(self):
-        print('Creating load balancer ...')
+        print 'Creating load balancer ...' 
         load_balancer_details = CreateLoadBalancerDetails(
             compartment_id = self.config['compartment'],
             display_name = self.config['display_name'],

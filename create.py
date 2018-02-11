@@ -6,7 +6,7 @@ from compute import Compute
 from mean_stack_config import MeanStackConfig
 from load_balancer import LoadBalancer
 
-debug = True
+debug = False
 
 if debug:
     parser = ConfigParser()
@@ -29,8 +29,23 @@ compute = Compute(config, subnet)
 compute = Compute(config, subnet)
 compute.launch_instance()
 compute.get_vnic(vcn)
-mean_stack = MeanStackConfig(compute)
-mean_stack.client.connect(mean_stack.public_ip, username='opc', look_for_keys=False, key_filename=mean_stack.keyfile, timeout=1)
+#self.public_ip = compute.public_ip
+#self.keyfile = compute.keyfile
+print('Connecting to opc@%s ...' % (compute.public_ip))
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+
+try:
+    while True:
+        try:
+            client.connect(compute.public_ip, username='opc', look_for_keys=False, key_filename=compute.keyfile)
+            break
+        except Exception as e:
+            pass
+except Exception as e:
+    pass
+mean_stack.client.connect(mean_stack.public_ip, username='opc', look_for_keys=False, user_agent key_filename=mean_stack.keyfile, timeout=1)
 """
 
 def join_threads(threads):
@@ -64,4 +79,4 @@ if __name__ == '__main__':
     lb.create_backend_set()
     lb.create_backends()
     lb.create_listener()
-    print('MEAN Stack URL: http://' + lb.public_ip + ':8080')
+    print 'MEAN Stack URL: http://' + lb.public_ip + ':8080'
