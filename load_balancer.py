@@ -32,7 +32,7 @@ class LoadBalancer(object):
                     self.lb_instance = lb
                     self.public_ip = lb.ip_addresses[0].ip_address
                     return
-            time.sleep(5)
+            time.sleep(20)
 
     def create_backend_set(self):
         health_checker_details = HealthCheckerDetails(
@@ -66,7 +66,7 @@ class LoadBalancer(object):
                 continue
             while len(self.backends) < 2:
                 self.backends = self.client.list_backends(self.lb_instance.id, self.config['backend_set_name']).data
-                time.sleep(1)
+                time.sleep(30)
             return
 
     def create_listener(self):
