@@ -32,7 +32,7 @@ class LoadBalancer(object):
                     self.lb_instance = lb
                     self.public_ip = lb.ip_addresses[0].ip_address
                     return
-            time.sleep(20)
+            time.sleep(30)
 
     def create_backend_set(self):
         health_checker_details = HealthCheckerDetails(
@@ -77,4 +77,4 @@ class LoadBalancer(object):
             protocol = 'HTTP'
         )
         self.client.create_listener(listener_details, self.lb_instance.id)
-        time.sleep(10)
+        time.sleep(30)
