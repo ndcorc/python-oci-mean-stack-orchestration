@@ -1,13 +1,15 @@
 import os, sys, time, threading, configparser
 
 import oci
-from vcn import VCN
-from compute import Compute
-from load_balancer import LoadBalancer
 from oci.load_balancer.load_balancer_client import LoadBalancerClient
 from oci.core.compute_client import ComputeClient
 from oci.core.virtual_network_client import VirtualNetworkClient
 from oci.core.models.update_route_table_details import UpdateRouteTableDetails
+from orchestration import *
+#from vcn import VCN
+#from compute import Compute
+#from load_balancer import LoadBalancer
+
 
 debug = False
 
