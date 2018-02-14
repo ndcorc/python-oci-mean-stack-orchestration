@@ -1,13 +1,15 @@
 import os, sys, time, threading, configparser
 
 import oci
-from vcn import VCN
-from compute import Compute
-from load_balancer import LoadBalancer
 from oci.load_balancer.load_balancer_client import LoadBalancerClient
 from oci.core.compute_client import ComputeClient
 from oci.core.virtual_network_client import VirtualNetworkClient
 from oci.core.models.update_route_table_details import UpdateRouteTableDetails
+from orchestration import *
+#from vcn import VCN
+#from compute import Compute
+#from load_balancer import LoadBalancer
+
 
 debug = False
 
@@ -25,7 +27,7 @@ vcn_client = VirtualNetworkClient(config)
 def sleep(): time.sleep(1)
 
 def destroy_compute_instance(instance):
-    print('Destroying compute instance ...')
+    print 'Destroying compute instance ...'
     compute_client.terminate_instance(instance.id)
     while True:
         try:
@@ -34,7 +36,7 @@ def destroy_compute_instance(instance):
         except Exception as e: return
 
 def destroy_subnet(subnet):
-    print('\tDestroying subnet ...')
+    print '\tDestroying subnet ...' 
     vcn_client.delete_subnet(subnet.id)
     while True:
         try:
@@ -43,7 +45,7 @@ def destroy_subnet(subnet):
         except Exception as e: return
 
 if __name__ == '__main__':
-    print('Destroying ssh keys ...')
+    print 'Destroying ssh keys ...' 
     for filename in os.listdir('.'):
         if filename.startswith('private'):
             os.remove(filename)
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     """                             """
     """""""""""""""""""""""""""""""""""
     """""""""""""""""""""""""""""""""""
-    print('Destroying load balancer ...')
+    print 'Destroying load balancer ...' 
     lbs = lb_client.list_load_balancers(config['compartment']).data
     lb = next((x for x in lbs if x.display_name == config['display_name']), None)
     try: lb_client.delete_load_balancer(lb.id)
@@ -89,7 +91,7 @@ if __name__ == '__main__':
     """                             """
     """""""""""""""""""""""""""""""""""
     """""""""""""""""""""""""""""""""""
-    print('Destroying VCN ...')
+    print 'Destroying VCN ...'
     vcns = vcn_client.list_vcns(config['compartment']).data
     vcn = next((x for x in vcns if x.display_name == config['display_name']), None)
     if vcn == None: quit()
@@ -101,12 +103,12 @@ if __name__ == '__main__':
         thread.start()
     for thread in threads:
         thread.join()
-    print('\tDestroying route rules ...')
+    print '\tDestroying route rules ...' 
     vcn_client.update_route_table(
         rt_id = vcn.default_route_table_id,
         update_route_table_details = UpdateRouteTableDetails(route_rules=[])
     )
-    print('\tDestroying internet gateway ...')
+    print '\tDestroying internet gateway ...' 
     gateways = vcn_client.list_internet_gateways(config['compartment'], vcn.id).data
     if len(gateways) > 0:
         gateway = gateways[0]

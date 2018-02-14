@@ -18,7 +18,7 @@ class LoadBalancer(object):
         self.subnet_ids = [subnet.id for subnet in vcn.subnets]
 
     def create_load_balancer(self):
-        print('Creating load balancer ...')
+        print 'Creating load balancer ...' 
         load_balancer_details = CreateLoadBalancerDetails(
             compartment_id = self.config['compartment'],
             display_name = self.config['display_name'],
@@ -32,7 +32,7 @@ class LoadBalancer(object):
                     self.lb_instance = lb
                     self.public_ip = lb.ip_addresses[0].ip_address
                     return
-            time.sleep(5)
+            time.sleep(30)
 
     def create_backend_set(self):
         health_checker_details = HealthCheckerDetails(
@@ -66,7 +66,7 @@ class LoadBalancer(object):
                 continue
             while len(self.backends) < 2:
                 self.backends = self.client.list_backends(self.lb_instance.id, self.config['backend_set_name']).data
-                time.sleep(1)
+                time.sleep(30)
             return
 
     def create_listener(self):
@@ -77,4 +77,4 @@ class LoadBalancer(object):
             protocol = 'HTTP'
         )
         self.client.create_listener(listener_details, self.lb_instance.id)
-        time.sleep(10)
+        time.sleep(30)
